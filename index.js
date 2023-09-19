@@ -15,20 +15,25 @@ app.use(cors({ optionsSuccessStatus: 200 })); // some legacy browsers choke on 2
 app.use(express.static("public"));
 
 // http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (req, res) {
+app.get("/", function(req, res) {
   res.sendFile(__dirname + "/views/index.html");
 });
 
 // your first API endpoint...
-app.get("/api/whoami", function (req, res) {
+app.get("/api/whoami", function(req, res) {
   const ip = req.socket.remoteAddress || req.ip;
   const lang = req.headers["accept-language"];
   const userAgent = req.headers["user-agent"];
+  let ipaddress;
 
-  res.status(200).send({ ipaddress: ip, language: lang, software: userAgent });
+  if (ip.startsWith('::ffff:')) {
+    ipaddress = ip.substring(7)
+  }
+
+  res.status(200).send({ ipaddress: ipaddress, language: lang, software: userAgent });
 });
 
 // listen for requests :)
-const listener = app.listen(process.env.PORT || 3000, function () {
+const listener = app.listen(process.env.PORT || 3000, function() {
   console.log("Your app is listening on port " + listener.address().port);
 });
